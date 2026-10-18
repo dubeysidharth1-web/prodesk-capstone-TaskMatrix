@@ -1,0 +1,25 @@
+flowchart TD
+    APP["TaskMatrix Next.js App"]
+    PAGES["App Router Pages"]
+    UI["Reusable UI Components"]
+    STORE["Zustand Global Store"]
+
+    APP --> PAGES
+    APP --> UI
+    PAGES --> STORE
+    UI --> STORE
+
+    STORE --> PROJECTS["projects"]
+    STORE --> TASKS["tasks"]
+    STORE --> USERS["teamMembers"]
+    STORE --> FILTERS["filters"]
+    STORE --> ACTIVITY["activity"]
+    STORE --> UISTATE["uiState"]
+
+    STORE --> SERVICES["Data Access / Service Layer"]
+    SERVICES --> API["Planned Mock API Endpoints"]
+
+    API --> PROJECTAPI["/api/projects"]
+    API --> TASKAPI["/api/tasks"]
+    API --> USERAPI["/api/users"]
+    API --> ACTIVITYAPI["/api/tasks/[taskId]/activity"]
