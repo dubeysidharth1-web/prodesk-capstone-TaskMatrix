@@ -166,8 +166,9 @@ Wireframes will be created in Figma for the following views:
 3. Task Details — desktop and mobile.
 
 The design will prioritize clarity, consistent spacing, readable task cards, visible status labels, accessible controls, and responsive layouts.
-
-**Public Figma Link:** To be added after the wireframes are created and sharing permissions are enabled.
+**Public Figma Link:**
+[View TaskMatrix Figma Prototype](https://www.figma.com/proto/U8giAibV9yR4lsgBOhscWs/taskmatrix)
+**Public Figma Link:** 
 
 ## 13. Non-Functional Requirements
 
