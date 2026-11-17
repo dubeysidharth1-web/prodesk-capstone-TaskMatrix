@@ -204,9 +204,60 @@ All generated or suggested code will be reviewed and understood before implement
 
 ## 17. Current Project Status
 
-**Current Phase:** Sprint 13 — Capstone Planning
+**Current Phase:** Sprint 14 — The Walking Skeleton (Authentication & Routing MVP)
 
-Planning deliverables include the PRD, UI/UX wireframes, frontend state architecture, planned API contracts, and AI prompt documentation.
+Sprint 14 implements the core walking skeleton of TaskMatrix with Next.js App Router, Supabase Auth via `@supabase/ssr`, server-side route protection with Next.js Edge Middleware, and client-side profile synchronization using Zustand.
 
-Functional application code, API implementation, and deployment are planned for later sprints.
+---
+
+## 18. Sprint 14 — The Walking Skeleton Implementation
+
+### 18.1 Architecture & Security Model
+- **Next.js Version:** `14.2.16` (App Router)
+- **Authentication Service:** Supabase Auth via official `@supabase/ssr` (`^0.5.1`)
+- **Session Management:** Secure HTTP-only cookies. No access tokens, refresh tokens, or passwords are ever stored in localStorage or Zustand.
+- **Server Verification:** `supabase.auth.getUser()` is enforced on every protected request in `middleware.js` and Server Components as the single source of truth.
+- **Client State Synchronization:** Zustand store (`store/useAuthStore.js`) synchronizes only non-sensitive user profile attributes (`id`, `name`, `email`) and UI auth flag.
+
+### 18.2 Application Routes
+| Route | Access | Purpose |
+|---|---|---|
+| `/` | Public (Dynamic redirect) | Server-side auth check; redirects to `/dashboard` if authenticated, else `/login` |
+| `/login` | Public (Guest only) | Email and password sign-in form with client validation; redirects to `/dashboard` if already authenticated |
+| `/register` | Public (Guest only) | Full name, email, password, and confirmation registration form; handles email confirmation notices |
+| `/dashboard` | Protected (Server verified) | Protected workspace displaying authenticated user name, email, UID, and logout control |
+| `/auth/callback` | Route Handler | Exchanges PKCE verification codes for session cookies |
+
+### 18.3 Supabase Setup Instructions
+1. Create a project at [supabase.com](https://supabase.com).
+2. Navigate to **Project Settings > API**.
+3. Copy **Project URL** and the public **anon key**.
+4. In **Authentication > URL Configuration**:
+   - Set **Site URL** to `http://localhost:3000` (or your Vercel deployment URL).
+   - Add Redirect URL: `http://localhost:3000/auth/callback` (and `https://your-domain.vercel.app/auth/callback`).
+5. In **Authentication > Providers > Email**:
+   - Toggle "Confirm email" as desired. If enabled, the application automatically handles and displays the verification notice without creating false authenticated sessions.
+
+### 18.4 Required Environment Variables
+Create a `.env.local` file in the project root:
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-publishable-key
+```
+
+### 18.5 Local Run Instructions
+```bash
+# 1. Install dependencies
+npm install
+
+# 2. Run automated tests (8 comprehensive scenarios)
+npm test
+
+# 3. Run production build validation
+npm run build
+
+# 4. Start development server
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 

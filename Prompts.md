@@ -118,3 +118,78 @@ Real-time updates, notifications, analytics, and AI-powered summaries are consid
 - [ ] Planning documents reviewed before Sprint 13 submission
 
 This document records planned approaches and AI-assisted planning questions. It does not claim that the application, API endpoints, or diagrams have already been implemented.
+
+
+---
+
+## 7. Sprint 14 — The Walking Skeleton Prompts & Decisions
+
+### Prompt 8 — Inspection & Architectural Proposal
+
+**Prompt:**
+> Inspect the existing TaskMatrix repository. Report:
+> 1. Existing folder structure.
+> 2. Next.js version.
+> 3. Current dependencies.
+> 4. Existing Zustand implementation.
+> 5. Files that need to be created or modified.
+> 6. Supabase integration plan.
+> Wait for my review before making major changes.
+
+**Architectural Outcome & Corrections:**
+- Pinned Next.js to `14.2.16` with React `18.3.1` for production-grade stability with `@supabase/ssr` cookies management.
+- Verified Edge Middleware convention (`middleware.js` with `createClient` using `getAll`/`setAll` cookies pattern).
+- Established server-side `supabase.auth.getUser()` as the single source of truth for authentication.
+- Restricted Zustand store to non-sensitive profile state (`id`, `name`, `email`), explicitly rejecting token or password storage.
+
+### Prompt 9 — Scaffolding & Routing Scaffolding (Phase 2)
+
+**Prompt:**
+> Initialize the Next.js App Router project. Create `/login`, `/register`, and `/dashboard`. Build functional forms with validation, loading, and error states. Keep styling minimal. After Phase 2, show the folder structure and explain the files created. Do not begin Supabase integration until reviewed.
+
+**Implementation Outcome:**
+- Scaffolding initialized with Tailwind CSS, `jsconfig.json`, `next.config.mjs`, and root `store/useAuthStore.js`.
+- Implemented `/login` with email/password validation and loading states.
+- Implemented `/register` with name, email, password, and confirmation matching validation.
+- Implemented `/dashboard` with display profile card, sprint notice, and logout action.
+- Validated clean compilation with `npm run build`.
+
+### Prompt 10 — Supabase Authentication Integration (Phase 3)
+
+**Prompt:**
+> Proceed with Phase 3: Supabase Authentication Integration.
+> 1. Create reusable browser and server Supabase clients using `@supabase/ssr`.
+> 2. Implement user registration with full name saved in user metadata, handling email confirmation (`data.session === null`).
+> 3. Implement login using Supabase email/password.
+> 4. Protect `/dashboard` server-side via `middleware.js` and `supabase.auth.getUser()`.
+> 5. Redirect unauthenticated users to `/login`, and authenticated users away from `/login` and `/register`.
+> 6. Synchronize only ID, name, email to Zustand.
+> 7. Implement sign-out clearing sessions and redirecting to `/login`.
+> 8. Add automated tests covering the 8 required scenarios and run `npm run build`.
+
+**Implementation Outcome:**
+- Created `lib/supabase/client.js`, `lib/supabase/server.js`, and `lib/supabase/middleware.js`.
+- Created root `middleware.js` for server-side route gating.
+- Created `app/auth/callback/route.js` for PKCE and email confirmation token exchange.
+- Implemented registration with metadata and unconfirmed-session detection in `app/register/page.js`.
+- Implemented login in `app/login/page.js` with `Suspense` boundary for `useSearchParams()`.
+- Implemented server-verified `/dashboard` in `app/dashboard/page.js` and `DashboardClient.js`.
+- Built automated test suite (`tests/auth-scenarios.test.mjs`) verifying all 8 scenarios; 8/8 passed.
+- Production build verified with `npm run build` (zero errors).
+
+---
+
+## 8. Current Implementation Status
+
+**Sprint 14 Status:** Completed & Fully Verified
+- [x] Pinned Next.js 14.2.16 with App Router
+- [x] `@supabase/ssr` browser, server, and middleware clients created
+- [x] User registration with metadata and email confirmation handling
+- [x] User login with credential validation
+- [x] Server-side protected `/dashboard` via `middleware.js` (`supabase.auth.getUser()`)
+- [x] Unauthenticated redirect to `/login`
+- [x] Authenticated redirect away from `/login` and `/register`
+- [x] Logout clearing Supabase session cookies and Zustand store
+- [x] 8/8 automated scenario tests passing
+- [x] Production build clean (`npm run build`)
+- [x] README.md and Prompts.md updated while preserving Sprint 13 history
